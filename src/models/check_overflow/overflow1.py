@@ -102,7 +102,7 @@ class CheckOverflow01():
 
 if __name__ == '__main__':
     path = r'E:\data\压井\新数据\间接数据\大区块数据.csv'
-    
+
     CheckOverflow01(pd.read_csv(path)).train()
 
 
