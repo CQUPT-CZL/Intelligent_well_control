@@ -16,8 +16,11 @@ class LGBModel():
         self.X_train = X_train
         self.Y_train = Y_train
         self.X_test = X_test
-
-    def train_and_pred(self):
         self.model.fit(self.X_train, self.Y_train)
+
+    def self_pred(self):
         return self.model.predict(self.X_test)
+
+    def other_pred(self, X):
+        return self.model.predict(X)
 

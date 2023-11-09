@@ -2,9 +2,11 @@
 这个判断压井液密度的方法是
 用区块中井数大于等于3的区块
 来预测
+与初始版本的区别是，本次预测的指标就是mean、max、min
 '''
 import random
 import time
+import numpy as np
 import datetime
 import pandas as pd
 from Intelligent_well_control.src.models.utils.save_to_csv import SaveToCsv
@@ -35,6 +37,23 @@ class CheckDealDensity():
             'mse': mean_squared_error(Y_pred, Y_test)
         }
 
+    def pred(self, model, test):
+        res = {}
+        for well_id in test.keys():
+            cur_res = {}
+            X_test, Y_test = test[well_id]
+            Y_pred = model.other_pred(X_test)
+            min_value = np.min(Y_pred)
+            max_value = np.max(Y_pred)
+            mean_value = np.min(Y_pred)
+            cur_res['max'] = round(max_value, 2)
+            cur_res['min'] = round(min_value, 2)
+            cur_res['mean'] = round(mean_value, 2)
+            cur_res['true'] = np.min(Y_test)
+            res[well_id] = cur_res
+
+        return res
+
     def train(self):
         save = SaveToCsv(r'E:\项目\Intelligent_well_control\reports\deal_density_report.csv')
 
@@ -62,6 +81,14 @@ class CheckDealDensity():
 
             X_train = cur_data[cur_data['well_id'].isin(train_well_ids)][feature_names]
             Y_train = cur_data[cur_data['well_id'].isin(train_well_ids)][labels]
+
+            # 这里注意一下区别，每一个预测的井号单独进行预测，搞一个字典记录吧
+
+            test = {}
+            for test_id in test_well_ids:
+                test[test_id] = (cur_data[cur_data['well_id'] == test_id][feature_names],
+                                 cur_data[cur_data['well_id'] == test_id][labels])
+
             X_test = cur_data[cur_data['well_id'].isin(test_well_ids)][feature_names]
             Y_test = cur_data[cur_data['well_id'].isin(test_well_ids)][labels]
 
@@ -75,6 +102,9 @@ class CheckDealDensity():
 
             score = self.metrics(Y_test, Y_pred)
 
+            details_score = self.pred(model, test)
+            print(details_score)
+
             save.save({
                 '任务名': '压井液密度预测',
                 '时间': datetime.datetime.now(),
@@ -84,7 +114,7 @@ class CheckDealDensity():
                 '测试井号': test_well_ids,
                 '测试数据量': X_test.shape[0],
                 'mse': score['mse'],
-                '其他': ' ',
+                '其他': details_score,
             })
 
         # 留个空行，方便区分每次实验
@@ -96,8 +126,3 @@ class CheckDealDensity():
 if __name__ == '__main__':
     path = r'E:\data\压井\新数据\间接数据\大区块数据.csv'
     CheckDealDensity(pd.read_csv(path)).train()
-
-
-
-
-
