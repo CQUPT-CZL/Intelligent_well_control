@@ -24,3 +24,4 @@ class LGBModel():
     def other_pred(self, X):
         return self.model.predict(X)
 
+
