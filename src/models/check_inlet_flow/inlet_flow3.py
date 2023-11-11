@@ -136,6 +136,7 @@ class CheckDealDensity():
                 'mean_true': score['mean_true'],
                 'std_true': score['std_true'],
                 'median_true': score['median_true'],
+                'mean_diff': np.abs(score['mean_pred'] - score['mean_true']),
                 '其他': ' ',
             })
 
@@ -154,6 +155,7 @@ class CheckDealDensity():
              'mean_true': 'mean_true',
              'std_true': 'std_true',
              'median_true': 'median_true',
+             'mean_diff' : 'mean_diff',
              }
         )
 

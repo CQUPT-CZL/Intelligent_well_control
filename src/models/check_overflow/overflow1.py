@@ -6,6 +6,7 @@
 import random
 import time
 import datetime
+from datetime import datetime
 import pandas as pd
 from Intelligent_well_control.src.models.utils.save_to_csv import SaveToCsv
 from Intelligent_well_control.src.models.LGBM import LGBModel
@@ -62,7 +63,6 @@ class CheckOverflow01():
             test_well_ids = random.sample(well_id_list, len(well_id_list) * 4 // 10)
             train_well_ids = [well_id for well_id in well_id_list if well_id not in test_well_ids]
 
-
             X_train = cur_data[cur_data['well_id'].isin(train_well_ids)][feature_names]
             Y_train = cur_data[cur_data['well_id'].isin(train_well_ids)][labels]
             X_test = cur_data[cur_data['well_id'].isin(test_well_ids)][feature_names]
@@ -80,12 +80,11 @@ class CheckOverflow01():
             model = LGBModel(type = 'classifier', X_train = X_train, Y_train = Y_train, X_test = X_test)
             Y_pred = model.self_pred()
 
-
             score = self.metrics(Y_test, Y_pred)
 
             save.save({
                 '任务名': '预测是否溢流',
-                '时间' : datetime.datetime.now(),
+                '时间' : datetime.now().date(),
                 '区块号' : block_id,
                 '训练井号' : train_well_ids,
                 '训练数据量' : X_train.shape[0],
@@ -97,7 +96,6 @@ class CheckOverflow01():
 
         # 留个空行，方便区分每次实验
         save.save({'任务名': '', '时间': '', '区块号': '', '训练井号': '', '训练数据量': '', '测试井号': '', '测试数据量': '', '准确率': '', '其他': ''})
-
 
 
 if __name__ == '__main__':

@@ -134,6 +134,7 @@ class CheckDealDensity():
                 'mean_true': score['mean_true'],
                 'std_true': score['std_true'],
                 'median_true': score['median_true'],
+                'mean_diff': np.abs(score['mean_pred'] - score['mean_true']),
                 '其他': ' ',
             })
 
@@ -152,6 +153,7 @@ class CheckDealDensity():
              'mean_true': 'mean_true',
              'std_true': 'std_true',
              'median_true': 'median_true',
+             'mean_diff': 'mean_diff',
              }
         )
 
@@ -160,4 +162,6 @@ class CheckDealDensity():
 
 if __name__ == '__main__':
     path = r'E:\data\压井\新数据\间接数据\大区块数据.csv'
-    CheckDealDensity(pd.read_csv(path)).train(9)
+    checkDealDensity = CheckDealDensity(pd.read_csv(path))
+    for block_id in checkDealDensity.find():
+        checkDealDensity.train(block_id)
