@@ -78,7 +78,7 @@ class CheckOverflow01():
             print(X_train.shape, X_test.shape, Y_train.shape)
 
             model = LGBModel(type = 'classifier', X_train = X_train, Y_train = Y_train, X_test = X_test)
-            Y_pred = model.train_and_pred()
+            Y_pred = model.self_pred()
 
 
             score = self.metrics(Y_test, Y_pred)

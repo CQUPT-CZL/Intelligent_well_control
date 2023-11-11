@@ -1,5 +1,5 @@
 '''
-这个判断压井液密度的方法是
+这个判断inlet_flow的方法是
 用区块中井数大于等于3的区块
 来预测
 与版本3的区别是：
@@ -79,20 +79,22 @@ class CheckDealDensity():
         return res
 
     def train(self, block_id):
-        save = SaveToCsv(r'E:\项目\Intelligent_well_control\reports\deal_density_3_report.csv')
+        save = SaveToCsv(r'E:\项目\Intelligent_well_control\reports\inlet_flow_3_report.csv')
         cur_data = self.data[self.data['block_id'] == block_id]
-        cur_data = cur_data[cur_data['overflow_detected'] == 1]
+        # cur_data = cur_data[cur_data['overflow_detected'] == 1]
+        cur_data.loc[cur_data['inlet_flow'] <= 0, 'inlet_flow'] = 0
+        # cur_data.loc[cur_data['inlet_flow'] == -1, 'inlet_flow'] = 0
         well_id_list = cur_data['well_id'].unique().tolist()
 
         for test_well_id in well_id_list:
             test_well_ids = [test_well_id]
             train_well_ids = [well_id for well_id in well_id_list if well_id not in test_well_ids]
 
-            labels = 'deal_density'
+            labels = 'inlet_flow'
             rem_col_list = ['id', 'well_id', 'time', 'overflow_flag',
                             'work_state', 'invader_type', 'kill_main_method_x',
                             'deal_density', 'overflow_detected', 'block_id',
-                            'standpipe_pressure', 'casing_pressure']
+                            'standpipe_pressure', 'casing_pressure', 'inlet_flow']
             feature_names = list(
                 filter(lambda x: x not in rem_col_list, cur_data.columns))
 
@@ -120,13 +122,13 @@ class CheckDealDensity():
             score = self.metrics(Y_test, Y_pred)
 
             save.save({
-                '任务名': '压井密度模型3',
+                '任务名': '入口排量模型3',
                 '时间': datetime.datetime.now(),
                 '训练数据量': X_train.shape[0],
                 '测试数据量': X_test.shape[0],
                 'mse': score['mse'],
                 '区块号': block_id,
-                '训练井号': train_well_ids,
+                # '训练井号': train_well_ids,
                 '测试井号': test_well_ids,
                 'mean_pred': score['mean_pred'],
                 'std_pred': score['std_pred'],
@@ -144,7 +146,7 @@ class CheckDealDensity():
              '测试数据量': '',
              'mse': '',
              '区块号': '区块号',
-             '训练井号': '训练井号',
+             # '训练井号': '训练井号',
              '测试井号': '测试井号',
              'mean_pred': 'mean_pred',
              'std_pred': 'std_pred',
@@ -160,4 +162,6 @@ class CheckDealDensity():
 
 if __name__ == '__main__':
     path = r'E:\data\压井\新数据\间接数据\大区块数据.csv'
-    CheckDealDensity(pd.read_csv(path)).train(9)
+    checkDealDensity = CheckDealDensity(pd.read_csv(path))
+    for block_id in checkDealDensity.find():
+        checkDealDensity.train(block_id)
