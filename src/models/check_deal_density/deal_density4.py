@@ -4,13 +4,14 @@
 import random
 import time
 import datetime
+import numpy as np
 from datetime import datetime
 import pandas as pd
 import lightgbm as lgb
 from Intelligent_well_control.src.models.utils.save_to_csv import SaveToCsv
 from Intelligent_well_control.src.models.LGBM import LGBModel
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, mean_squared_error
 
 
 class CheckOverflow01():
@@ -32,19 +33,42 @@ class CheckOverflow01():
 
     def metrics(self, Y_test, Y_pred):
         # print(Y_test, Y_pred)
+        max_pred = np.max(Y_pred)
+        min_pred = np.min(Y_pred)
+        mean_pred = np.mean(Y_pred)
+        std_pred = np.std(Y_pred)
+        median_pred = np.median(Y_pred)
+
+        max_true = np.max(Y_test)
+        min_true = np.min(Y_test)
+        mean_true = np.mean(Y_test)
+        std_true = np.std(Y_test)
+        median_true = np.median(Y_test)
+
         return {
-            'accuracy_score': accuracy_score(Y_pred, Y_test)
+            'mse': mean_squared_error(Y_pred, Y_test),
+            'max_pred': np.round(max_pred, 2),
+            'min_pred': np.round(min_pred, 2),
+            'mean_pred': np.round(mean_pred, 2),
+            'std_pred': np.round(std_pred, 2),
+            'median_pred': np.round(median_pred, 2),
+            'max_true': np.round(max_true, 2),
+            'min_true': np.round(min_true, 2),
+            'mean_true': np.round(mean_true, 2),
+            'std_true': np.round(std_true, 2),
+            'median_true': np.round(median_true, 2),
         }
 
     def train(self):
         # save =
         # save = SaveToCsv(r'E:\项目\Intelligent_well_control\reports\overflow_3_report.csv')
-        save = SaveToCsv('/home/czl/project/Intelligent_well_control/reports/overflow_3_report.csv')
+        save = SaveToCsv('/home/czl/project/Intelligent_well_control/reports/deal_density_4_report.csv')
         # save.save({})
+        self.data = self.data[self.data['overflow_detected'] == 1]
         well_id_list = self.data['well_id'].unique().tolist()
         print(len(well_id_list), well_id_list)
 
-        labels = 'overflow_detected'
+        labels = 'deal_density'
         rem_col_list = ['id', 'well_id', 'time', 'overflow_flag',
                         'work_state', 'invader_type', 'kill_main_method_x',
                         'deal_density', 'overflow_detected', 'block_id',
@@ -66,7 +90,7 @@ class CheckOverflow01():
             Y_test = self.data[self.data['well_id'].isin(test_well_ids)][labels]
             # print(Y_test)
 
-            model = LGBModel(type='classifier', X_train=X_train,
+            model = LGBModel( X_train=X_train,
                              Y_train=Y_train,
                              X_test=X_test)
             Y_pred = model.self_pred()
@@ -77,15 +101,22 @@ class CheckOverflow01():
             score = self.metrics(Y_test, Y_pred)
 
             save.save({
-                'work': 'is_overflow',
-                # '时间': datetime.now().date(),
-                # '区块号': 'block_id',
-                # '训练井号': train_well_ids,
-                # '训练数据量': X_train.shape[0],
                 'test_well_id': test_well_ids,
+                'work': 'deal_density4',
+                # '时间': datetime.datetime.now(),
+                # '训练数据量': X_train.shape[0],
                 # '测试数据量': X_test.shape[0],
-                'accuracy': score['accuracy_score'],
-                'other': 'y_is_detected'
+                'mse': score['mse'],
+                # '区块号': block_id,
+                # '训练井号': train_well_ids,
+                'mean_pred': score['mean_pred'],
+                'std_pred': score['std_pred'],
+                'median_pred': score['median_pred'],
+                'mean_true': score['mean_true'],
+                'std_true': score['std_true'],
+                'median_true': score['median_true'],
+                'mean_diff': np.abs(score['mean_pred'] - score['mean_true']),
+                'other': ' ',
             })
 
             del X_train
