@@ -10,9 +10,9 @@ import lightgbm as lgb
 
 class LGBModel():
     def __init__(self, type = 'regressor', X_train = None, Y_train = None, X_test = None):
-        self.model = lgb.LGBMRegressor(n_estimators=4000)
+        self.model = lgb.LGBMRegressor(n_estimators=500, )
         if type != 'regressor':
-            self.model = lgb.LGBMClassifier(n_estimators=4000)
+            self.model = lgb.LGBMClassifier(n_estimators=500)
         self.X_train = X_train
         self.Y_train = Y_train
         self.X_test = X_test
