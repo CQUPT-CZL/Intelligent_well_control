@@ -84,7 +84,7 @@ class CheckOverflow01():
                     '测试井号' : test_well_ids, #其实就一个元素，不用列表了！
                     '测试数据量' : X_test.shape[0],
                     '准确率' : score['accuracy_score'],
-                    '其他' : 'y是detected'
+                    '其他' : 'y是detected，并且使用新数据2'
                 })
 
             # 留个空行，方便区分每次实验
@@ -100,7 +100,7 @@ class CheckOverflow01():
 
 
 if __name__ == '__main__':
-    path = r'E:\data\压井\新数据\间接数据\大区块数据.csv'
+    path = r'E:\data\压井\新数据\间接数据\大区块数据2.csv'
 
     CheckOverflow01(pd.read_csv(path)).train()
 

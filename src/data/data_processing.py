@@ -83,13 +83,13 @@ class DataProcessing():
 
         print('处理质地信息表')
         well_geology_data = well_geology_data.sort_values(by = ['well_id', 'sort'])
-        well_geology_data.drop(['rock_character', 'complex_layer_tips', 'id', 'sort'], axis=1, inplace=True)
+        well_geology_data.drop(['rock_character', 'complex_layer_tips', 'id', 'sort', 'series', 'group', 'section'], axis=1, inplace=True)
         well_geology_data = self.duo_to_one(well_geology_data, 'well_id')
         print(well_geology_data.shape)
 
         print('处理井身信息')
         well_body_data = well_body_data.sort_values(by=['well_id', 'drill_sequence'])
-        well_body_data.drop(['id', 'event_id', 'casing_pipe_type', 'graded_cementing', 'drill_sequence'], axis=1, inplace=True)
+        well_body_data.drop(['id', 'event_id', 'casing_pipe_type', 'graded_cementing', 'drill_sequence', 'series', 'group', 'section'], axis=1, inplace=True)
         well_body_data = self.duo_to_one(well_body_data, 'well_id')
         print(well_body_data.shape)
 
@@ -101,7 +101,7 @@ class DataProcessing():
         print(well_overflow_info_data.shape)
 
         print('处理井基础信息')
-        well_base_info_data.drop(['oilfield_enterprise_id', 'construct_unit',
+        well_base_info_data.drop(['oilfield_enterprise_id', 'construct_unit', 'block_specific',
                                   'drilling_enterprise', 'construct_team'], axis=1, inplace=True)
         print(well_base_info_data.shape)
 
@@ -109,7 +109,7 @@ class DataProcessing():
         new_df = pd.merge(well_base_info_data, well_body_data, on='well_id', how='outer')
         new_df = pd.merge(new_df, well_geology_data, on='well_id', how='outer')
         new_df = pd.merge(new_df, well_overflow_info_data, on='well_id', how='outer')
-        new_df = pd.get_dummies(new_df, columns=['block_specific'], dummy_na=True)
+        # new_df = pd.get_dummies(new_df, columns=['block_specific'], dummy_na=True)
 
         print('处理str特征')
         # str_fea_cols = (['section' + str(i) + '_x' for i in range(1, 21)] +
