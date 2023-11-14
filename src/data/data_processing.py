@@ -66,7 +66,7 @@ class DataProcessing():
         return wide_df
 
     def save(self, data, path=r'E:\data\压井\新数据\间接数据'):
-        data.to_csv(path + '\一半总数据.csv', index=False)
+        data.to_csv(path + '\一半总数据2.csv', index=False)
 
     def process(self, is_debug=False):
 
@@ -80,13 +80,16 @@ class DataProcessing():
         well_geology_data = self.get_well_geology_data()
         well_overflow_info_data = self.get_well_overflow_info_data()
 
+
         print('处理质地信息表')
-        well_geology_data.drop(['rock_character', 'complex_layer_tips', 'id'], axis=1, inplace=True)
+        well_geology_data = well_geology_data.sort_values(by = ['well_id', 'sort'])
+        well_geology_data.drop(['rock_character', 'complex_layer_tips', 'id', 'sort'], axis=1, inplace=True)
         well_geology_data = self.duo_to_one(well_geology_data, 'well_id')
         print(well_geology_data.shape)
 
         print('处理井身信息')
-        well_body_data.drop(['id', 'event_id', 'casing_pipe_type', 'graded_cementing'], axis=1, inplace=True)
+        well_body_data = well_body_data.sort_values(by=['well_id', 'drill_sequence'])
+        well_body_data.drop(['id', 'event_id', 'casing_pipe_type', 'graded_cementing', 'drill_sequence'], axis=1, inplace=True)
         well_body_data = self.duo_to_one(well_body_data, 'well_id')
         print(well_body_data.shape)
 
@@ -148,12 +151,17 @@ class DataProcessing():
         well_log_data['overflow_flag'].replace(2, 0, inplace=True)
         well_log_data['overflow_detected'].replace(2, 0, inplace=True)
 
+        print('将well_log_data中的负数替换为0')
+        for column in well_log_data.columns:
+            # 检查列的数据类型是否为整数或浮点数
+            if pd.api.types.is_numeric_dtype(well_log_data[column]):
+                # 将负数替换为0
+                well_log_data[column] = well_log_data[column].apply(lambda x: max(0, x) if pd.notnull(x) else x)
+
         # 取一半数据
         well_log_data = well_log_data[:: 2]
         new_df.drop_duplicates(subset=['well_id'], inplace=True)
         end_data = pd.merge(well_log_data, new_df, on='well_id', how='left')
-
-
 
 
 

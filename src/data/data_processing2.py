@@ -23,9 +23,9 @@ class Processing2():
     def save(self, path = r'E:\data\压井\新数据\间接数据'):
         block_ids = self.find().keys()
         print(block_ids)
-        self.data[self.data['block_id'].isin(block_ids)].to_csv(path + "\大区块数据.csv", index = False)
+        self.data[self.data['block_id'].isin(block_ids)].to_csv(path + "\大区块数据2.csv", index = False)
 
 if __name__ == '__main__':
-    path = r'E:\data\压井\新数据\间接数据\一半总数据.csv'
+    path = r'E:\data\压井\新数据\间接数据\一半总数据2.csv'
     Processing2(pd.read_csv(path)).save()
 
