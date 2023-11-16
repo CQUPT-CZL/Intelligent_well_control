@@ -42,9 +42,13 @@ class CheckOverflow01():
 
         block_st = self.find()
         for block_id in block_st.keys():
+            # if block_id != 2:
+            #     continue
             cur_data = self.data[self.data['block_id'] == block_id]
             well_id_list = cur_data['well_id'].unique().tolist()
             for test_well_id in well_id_list:
+                # if test_well_id != 2:
+                #     continue
                 labels = 'overflow_detected'
                 rem_col_list = ['id', 'well_id', 'time', 'overflow_flag',
                                 'work_state', 'invader_type', 'kill_main_method_x',
@@ -100,7 +104,7 @@ class CheckOverflow01():
 
 
 if __name__ == '__main__':
-    path = r'E:\data\压井\新数据\间接数据\大区块数据2.csv'
+    path = r'E:\data\压井\新数据\间接数据\大区块数据.csv'
 
     CheckOverflow01(pd.read_csv(path)).train()
 

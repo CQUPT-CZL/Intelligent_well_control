@@ -12,7 +12,7 @@ class PLT:
         self.save_file = save_file
 
 
-    def show(self):
+    def show_acc(self):
         plt.figure(figsize=(5, 3), dpi=200)
         plt.ylabel(self.y_label)
         plt.xlabel(self.x_label)
