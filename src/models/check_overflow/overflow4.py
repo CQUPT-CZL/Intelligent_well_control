@@ -78,6 +78,11 @@ for epo in range(epoch):
                          X_test=X_test)
         Y_pred = model.self_pred()
 
+        # 画个图
+        plt = PLT(1)
+        plt.show2(Y_pred = Y_pred, Y_true = Y_test)
+
+
         # 获取准确率
         acc = accuracy_score(Y_pred, Y_test)
         st.append((test_well_ids, acc))
