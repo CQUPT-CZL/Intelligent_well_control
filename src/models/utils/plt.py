@@ -45,12 +45,13 @@ class PLT:
         plt.xlabel('index')
         plt.title(title)
 
-        plt.show()
+        # plt.show()
 
         if save_path != None:
 
             plt.savefig(save_path)
-            print('save_plt_line!')
+            print('save_plt_line_successfully')
+
 
 
 
