@@ -32,22 +32,39 @@ class PLT:
             plt.savefig(self.save_file)
             print('image saved')
 
-    # 绘制每一个溢流判断与真实判断的线段图
+    # 绘制每一个溢流判断与真实判断的线段图,真实的，预测中，交叉的
     def show2(self, Y_pred, Y_true, title, save_path = None):
 
-        plt.figure(figsize=(15, 1))  # 设置图形大小，确保每个像素点都能清晰显示
+        fig, axes = plt.subplots(nrows=3, ncols=1, figsize=(8, 10))
+
+        # plt.figure(figsize=(40, 5))  # 设置图形大小，确保每个像素点都能清晰显示
+
         # 根据预测结果设置每个像素点的颜色
+
+        colors = ['g' if i == 0 else 'r' for i in Y_true]
+        axes[0].scatter(range(len(Y_true)), np.ones_like(Y_true), c=colors, marker='|', s=200)
+        axes[0].set_yticks([])  # 隐藏y轴刻度
+        axes[0].set_xlabel('index')
+        axes[0].set_title('Y_true')
+
+        colors = colors = ['g' if i == 0 else 'r' for i in Y_pred]
+        axes[1].scatter(range(len(Y_true)), np.ones_like(Y_true), c=colors, marker='|', s=200)
+        axes[1].set_yticks([])  # 隐藏y轴刻度
+        axes[1].set_xlabel('index')
+        axes[1].set_title('Y_pred')
+
         colors = ['g' if Y_true == Y_pred else 'r' for Y_true, Y_pred in zip(Y_true, Y_pred)]
+        axes[2].scatter(range(len(Y_true)), np.ones_like(Y_true), c=colors, marker='|', s=200)
+        axes[2].set_yticks([])  # 隐藏y轴刻度
+        axes[2].set_xlabel('index')
+        axes[2].set_title('true&pred')
 
-        plt.scatter(range(len(Y_true)), np.ones_like(Y_true), c=colors, marker='|', s=200)
-
-        plt.yticks([])  # 隐藏y轴刻度
-        plt.xlabel('index')
-        plt.title(title)
+        # 调整布局
+        plt.tight_layout()
 
         # plt.show()
 
-        if save_path != None:
+        if save_path is not None:
 
             plt.savefig(save_path)
             print('save_plt_line_successfully')
