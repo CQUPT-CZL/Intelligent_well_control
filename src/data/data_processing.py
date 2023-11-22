@@ -158,6 +158,9 @@ class DataProcessing():
                 # 将负数替换为0
                 well_log_data[column] = well_log_data[column].apply(lambda x: max(0, x) if pd.notnull(x) else x)
 
+        # 将录井仪的kill_main_method删掉
+        well_log_data.drop(['kill_main_method'], axis=1, inplace=True)
+
         # 取一半数据
         well_log_data = well_log_data[:: 2]
         new_df.drop_duplicates(subset=['well_id'], inplace=True)
