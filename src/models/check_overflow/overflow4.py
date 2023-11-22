@@ -16,13 +16,13 @@ from sklearn.metrics import accuracy_score
 
 # 定义一些变量
 
-is_local = True
+is_local = False
 data_file = r'E:\data\压井\新数据\间接数据\一半总数据2.csv'
 save_file = r'E:\项目\Intelligent_well_control\reports\overflow_4.2_report.csv'
 
 if not is_local:
-    data_file = '~/data/一半总数据2.csv'
-    save_file = '/home/czl/project/Intelligent_well_control/reports/overflow_4_report.csv'
+    data_file = r'~/data/压井/新数据/间接数据/一半总数据2.csv'
+    save_file = '/home/czl/project/Intelligent_well_control/reports/overflow_4.2_report.csv'
 
 epoch_remove_cnt = 3
 epoch = 5
@@ -62,8 +62,8 @@ for epo in range(epoch):
     cnt = 0
     for test_well_id in cur_well_ids:
         cnt += 1
-        # if cnt > 5:
-        #     break
+        if cnt > 3:
+            break
         test_well_ids = [test_well_id]
         train_well_ids = [well_id for well_id in cur_well_ids if well_id not in test_well_ids]
 
@@ -79,8 +79,8 @@ for epo in range(epoch):
         Y_pred = model.self_pred()
 
         # 画个图
-        plt = PLT(1)
-        plt.show2(Y_pred = Y_pred, Y_true = Y_test)
+        # plt = PLT(1)
+        # plt.show2(Y_pred = Y_pred, Y_true = Y_test)
 
 
         # 获取准确率
@@ -127,10 +127,10 @@ for epo in range(epoch):
 
 print(res)
 
-# 画图
-plt = PLT(res, y_label='acc', x_label='epoch', xticks=list(range(1, 11)),
-          save_file=r'E:\项目\Intelligent_well_control\reports\images\overflow4.png')
-plt.show()
+# # 画图
+# plt = PLT(res, y_label='acc', x_label='epoch', xticks=list(range(1, 11)),
+#           save_file=r'E:\项目\Intelligent_well_control\reports\images\overflow4.png')
+# plt.show()
 
 
 

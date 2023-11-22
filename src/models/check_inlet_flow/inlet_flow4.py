@@ -119,14 +119,14 @@ class CheckInletFlow4():
 
 if __name__ == '__main__':
 
-    is_remote = False
+    is_remote = True
     is_save = True
 
     data_file = r'E:\data\压井\新数据\间接数据\一半总数据2.csv'
     save_file = r'E:\项目\Intelligent_well_control\reports\inlet_flow\inlet_flow_4_report.csv'
     if is_remote:
         data_file = r'~/data/压井/新数据/间接数据/一半总数据2.csv'
-        save_file = r'\home\czl\project\Intelligent_well_control\reports\inlet_flow\inlet_flow_4_report.csv'
+        save_file = r'/home/czl/project/Intelligent_well_control/reports/inlet_flow/inlet_flow_4_report.csv'
 
     print(data_file, save_file)
 
