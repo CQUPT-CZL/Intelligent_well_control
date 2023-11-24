@@ -53,6 +53,7 @@ class CheckInletFlow4():
     def train(self):
 
         data = pd.read_csv(self.data_file)
+        print(data['well_id'].unique().tolist())
         data = data[data['overflow_detected'] == 1]
 
         #输出所有井号
