@@ -4,22 +4,22 @@ import numpy as np
 
 
 class PLT:
-    def show_acc(self):
+    def show_acc(self, x_label = None, y_label = None, data = None, xticks = None, save_file = None):
         plt.figure(figsize=(5, 3), dpi=200)
-        plt.ylabel(self.y_label)
-        plt.xlabel(self.x_label)
+        plt.ylabel(y_label)
+        plt.xlabel(x_label)
 
-        plt.xticks(self.xticks)
+        plt.xticks(xticks)
         plt.yticks([0.0, 0.25, 0.5, 0.75, 1.0])
 
-        for name, values in self.data.items():
+        for name, values in data.items():
             plt.plot(list(range(1, len(values) + 1)), values, label=name)
 
         plt.legend()
         plt.show()
         plt.close()
-        if self.save_file is not None:
-            plt.savefig(self.save_file)
+        if save_file is not None:
+            plt.savefig(save_file)
             print('image saved')
 
     # 绘制每一个溢流判断与真实判断的线段图,线状散点图
