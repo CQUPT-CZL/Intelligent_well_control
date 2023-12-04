@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 from datetime import datetime
 import numpy as np
+import seaborn as sns
+import pandas as pd
 
 
 class PLT:
@@ -21,6 +23,22 @@ class PLT:
         if save_file is not None:
             plt.savefig(save_file)
             print('image saved')
+
+
+    def show_feature_plot(self, top = 40, model = None):
+        feature_names = model.feature_name_
+        feature_importance = model.feature_importances_
+        feature_importance_df = pd.DataFrame({'Feature': feature_names, 'Importance': feature_importance})
+
+        feature_importance_df = feature_importance_df.sort_values(by='Importance', ascending=False)
+
+        # 输出前 20 个特征
+        top_features = feature_importance_df.head(top)
+
+        plt.figure(figsize=(4, 6))
+        sns.barplot(x='Importance', y='Feature', data=top_features, orient='h', palette='Set1')
+        plt.title(f'Top {top} Feature Importances')
+        plt.show()
 
     # 绘制每一个溢流判断与真实判断的线段图,线状散点图
     def show2(self, Y_pred, Y_true, title = 'test', save_path = None):
