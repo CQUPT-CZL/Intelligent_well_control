@@ -40,7 +40,7 @@ class Model():
 
         if model_name == 'svm':
             if type_name == 'classifier':
-                self.model = SVC(kernel='linear', C=1.0, n_jobs=-1)
+                self.model = SVC(kernel='linear', C=1.0)
             if type_name == 'regressor':
                 self.model = SVR(kernel='linear', C=1.0)
             self.model.fit(X_train, Y_train)

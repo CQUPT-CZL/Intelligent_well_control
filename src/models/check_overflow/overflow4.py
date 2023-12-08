@@ -10,7 +10,7 @@ import datetime
 import pandas as pd
 from Intelligent_well_control.src.models.utils.save_to_csv import SaveToCsv
 from Intelligent_well_control.src.models.utils.plt import PLT
-from Intelligent_well_control.src.models.LGBM import LGBModel
+from Intelligent_well_control.src.models.LGBM import Model
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.metrics import accuracy_score
 
@@ -18,15 +18,15 @@ from sklearn.metrics import accuracy_score
 
 is_local = False
 data_file = r'E:\data\压井\新数据\间接数据\一半总数据2.csv'
-save_file = r'E:\项目\Intelligent_well_control\reports\overflow_4.2_report.csv'
+save_file = r'E:\项目\Intelligent_well_control\reports\overflow_4.4_report.csv'
 
 if not is_local:
     data_file = r'~/data/压井/新数据/间接数据/一半总数据2.csv'
-    save_file = '/home/czl/project/Intelligent_well_control/reports/overflow_4.2_report.csv'
+    save_file = '/home/czl/project/Intelligent_well_control/reports/check_overflow/overflow_4.6_report.csv'
 
 epoch_remove_cnt = 3
-epoch = 5
-
+epoch = 8
+model_name = 'xgb'
 # 读入数据
 data = pd.read_csv(data_file)
 
@@ -43,7 +43,8 @@ feature_names = list(
 all_well_ids = data['well_id'].unique().tolist()
 
 # 随机选出10口井
-verify_well_ids = random.sample(all_well_ids, 10)
+# verify_well_ids = random.sample(all_well_ids, 10)
+verify_well_ids = [111, 5, 55, 71, 100, 19, 90, 65, 50, 13]
 
 res = {}
 for verify_well_id in verify_well_ids:
@@ -59,11 +60,7 @@ save = SaveToCsv(save_file)
 for epo in range(epoch):
     print(epo, 'ext')
     st = []
-    cnt = 0
     for test_well_id in cur_well_ids:
-        cnt += 1
-        if cnt > 3:
-            break
         test_well_ids = [test_well_id]
         train_well_ids = [well_id for well_id in cur_well_ids if well_id not in test_well_ids]
 
@@ -72,11 +69,11 @@ for epo in range(epoch):
         X_test = data[data['well_id'].isin(test_well_ids)][feature_names]
         Y_test = data[data['well_id'].isin(test_well_ids)][labels]
 
-        model = LGBModel(type='classifier',
+        model = Model(model_name=model_name,
+            type_name='classifier',
                          X_train=data[data['well_id'].isin(train_well_ids)][feature_names],
-                         Y_train=data[data['well_id'].isin(train_well_ids)][labels],
-                         X_test=X_test)
-        Y_pred = model.self_pred()
+                         Y_train=data[data['well_id'].isin(train_well_ids)][labels])
+        Y_pred = model.pred(X_test)
 
         # 画个图
         # plt = PLT(1)
@@ -103,10 +100,10 @@ for epo in range(epoch):
     # X_train =
     # Y_train =
 
-    model = LGBModel(type='classifier',
+    model = Model(model_name=model_name,
+        type_name='classifier',
                      X_train=data[data['well_id'].isin(cur_well_ids)][feature_names],
-                     Y_train=data[data['well_id'].isin(cur_well_ids)][labels],
-                     X_test=None)
+                     Y_train=data[data['well_id'].isin(cur_well_ids)][labels])
 
     tem_save = {'epoch' : epo + 1}
     for test_id in verify_well_ids:
@@ -114,7 +111,7 @@ for epo in range(epoch):
         X_test = data[data['well_id'] == test_id][feature_names]
         Y_test = data[data['well_id'] == test_id][labels]
 
-        Y_pred = model.other_pred(X_test)
+        Y_pred = model.pred(X_test)
 
         acc = accuracy_score(Y_pred, Y_test)
 
@@ -122,7 +119,7 @@ for epo in range(epoch):
 
         res[test_id].append(np.round(acc, 3))
 
-    tem_save['other'] = f'剔除了井{rem_well_ids}'
+    tem_save['other'] = f'removed {rem_well_ids}, {model_name}'
     save.save(tem_save)
 
 print(res)

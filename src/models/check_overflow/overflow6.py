@@ -67,7 +67,7 @@ class CheckOverflow06():
             model = lgb.LGBMClassifier(n_estimators=500)
 
             X_test, Y_test = None, None
-
+            cnt = 0
             for data in generator:
                 # print(data.shape)
                 X_train = data[data['well_id'].isin(train_well_ids)][feature_names]
@@ -88,7 +88,11 @@ class CheckOverflow06():
 
                 if X_train.shape[0] > 0:
                     print(X_train.shape, Y_train.shape)
-                    model.fit(X_train, Y_train)
+                    if cnt == 0:
+                        cnt += 1
+                        model.fit(X_train, Y_train)
+                    else:
+                        model.fit(X_train, Y_train, init_model=model)
             # print(Y_test)
 
             print('-----X_test----')
@@ -122,10 +126,10 @@ if __name__ == '__main__':
     is_save = True
 
     data_file = r'E:\data\压井\新数据\间接数据\一半总数据2.csv'
-    save_file = r'E:\项目\Intelligent_well_control\reports\check_overflow\overflow_6_report.csv'
+    save_file = r'E:\项目\Intelligent_well_control\reports\check_overflow\overflow_6.1_report.csv'
     if is_remote:
         data_file = r'~/data/压井/新数据/间接数据/一半总数据2.csv'
-        save_file = r'/home/czl/project/Intelligent_well_control/reports/check_overflow/overflow_6_report.csv'
+        save_file = r'/home/czl/project/Intelligent_well_control/reports/check_overflow/overflow_6.1_report.csv'
 
     print(data_file, save_file)
 
