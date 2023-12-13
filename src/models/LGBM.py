@@ -2,6 +2,7 @@ import lightgbm as lgb
 import xgboost as xgb
 from sklearn.svm import SVC, SVR
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.linear_model import LogisticRegression
 import pandas as pd
 import torch
 import torch.nn as nn
@@ -50,6 +51,11 @@ class Model():
                 self.model = RandomForestClassifier(n_estimators=500, random_state=42)
             if type_name == 'regressor':
                 self.model = RandomForestRegressor(n_estimators=500, random_state=42)
+            self.model.fit(X_train, Y_train)
+
+        # 逻辑回归, 只能分类
+        if model_name == 'lg':
+            self.model = LogisticRegression()
             self.model.fit(X_train, Y_train)
 
         if model_name == 'mlp':
